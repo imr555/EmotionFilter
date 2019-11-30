@@ -1,2 +1,2 @@
 # EmotionFilter
-A deep learning based emotion classifier
+A Machine-Learning based emotion classifier
