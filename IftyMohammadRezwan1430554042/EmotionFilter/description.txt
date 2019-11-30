@@ -1,0 +1,53 @@
+#After data preprocessing
+
+(28709, 2304)
+(3589, 2304)
+(3589, 2304)
+
+IAbove representation
+(Image count, pixelcount 48X48)
+
+#Description from jupyter notebook and others
+
+
+##Data in each row consists of three things. row[0]=label, row[1]= pixels, row[2]= Usage
+
+#Row last value is either Training, PublicTest or PrivateTest. Based on that three seperate lists
+
+#Create a temp list where we take row[1] or pixels and make a list of pixels with .split() and row[0] is used for 
+#corresponding labels
+
+
+Labels in fer2013 dataset: 0=Angry, 1=Disgust, 2=Fear, 3=Happy, 4=Sad, 5=Surprise, 6=Neutral
+
+(Training)
+
+0 = 3995 
+1 = 0436
+2 = 4097
+3 = 7215
+4 = 4830
+5 = 3171
+6 = 4965
+
+(Validation)
+
+
+0 = 467
+1 = 056
+2 = 496
+3 = 895
+4 = 653
+5 = 415
+6 = 607
+
+(Test)
+
+0 = 491
+1 = 055
+2 = 528
+3 = 879
+4 = 594
+5 = 416
+6 = 626
+
