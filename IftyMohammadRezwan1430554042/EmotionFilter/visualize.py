@@ -78,16 +78,7 @@ plt.xlabel(" Expression Category ",fontsize=16)
 plt.ylabel(" Classification Score ",fontsize=16)
 plt.xticks(ind, class_names, rotation=45, fontsize=14)
 
-#axes=plt.subplot(1, 3, 3)
-#emojis_img = io.imread('images/emojis/%s.png' % str(class_names[int(predicted.cpu().numpy())]))
-#plt.imshow(emojis_img)
-#plt.xlabel('Emoji Expression', fontsize=16)
-#axes.set_xticks([])
-#axes.set_yticks([])
-#plt.tight_layout()
-# show emojis
 
-#plt.show()
 plt.savefig(os.path.join('images/results/5sad.png'))
 plt.close()
 
