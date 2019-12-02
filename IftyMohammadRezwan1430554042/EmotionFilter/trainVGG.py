@@ -20,11 +20,12 @@ from models import *
 parser = argparse.ArgumentParser(description='PyTorch Fer2013 CNN Training')
 parser.add_argument('--model', type=str, default='VGG19', help='CNN architecture')
 parser.add_argument('--dataset', type=str, default='FER2013', help='CNN architecture')
-parser.add_argument('--bs', default=32, type=int, help='learning rate')
+parser.add_argument('--bs', default=32, type=int, help='batch size')
 parser.add_argument('--lr', default=0.01, type=float, help='learning rate')
 parser.add_argument('--resume', '-r', action='store_true', help='resume from checkpoint')
 opt = parser.parse_args()
 
+#setting up a few variables for placeholding
 use_cuda = torch.cuda.is_available()
 best_PublicTest_acc = 0  # best PublicTest accuracy
 best_PublicTest_acc_epoch = 0
@@ -32,6 +33,7 @@ best_PrivateTest_acc = 0  # best PrivateTest accuracy
 best_PrivateTest_acc_epoch = 0
 start_epoch = 0  # start from epoch 0 or last checkpoint epoch
 
+#setting up empirical values
 learning_rate_decay_start = 80  # 50
 learning_rate_decay_every = 5 # 5
 learning_rate_decay_rate = 0.9 # 0.9
@@ -41,7 +43,7 @@ total_epoch = 250
 
 path = os.path.join(opt.dataset + '_' + opt.model)
 
-# Data
+# Data preprocessing
 print('==> Preparing data..')
 transform_train = transforms.Compose([
     transforms.RandomCrop(44),
@@ -54,6 +56,7 @@ transform_test = transforms.Compose([
     transforms.Lambda(lambda crops: torch.stack([transforms.ToTensor()(crop) for crop in crops])),
 ])
 
+#create dataloaders for model
 trainset = FER2013(split = 'Training', transform=transform_train)
 trainloader = torch.utils.data.DataLoader(trainset, batch_size=opt.bs, shuffle=True, num_workers=1)
 PublicTestset = FER2013(split = 'PublicTest', transform=transform_test)
@@ -85,7 +88,9 @@ else:
 if use_cuda:
     net.cuda()
 
+#setting up Loss function
 criterion = nn.CrossEntropyLoss()
+#setting up Optimizer
 optimizer = optim.SGD(net.parameters(), lr=opt.lr, momentum=0.9, weight_decay=5e-4)
 
 # Training
@@ -107,12 +112,19 @@ def train(epoch):
     print('learning_rate: %s' % str(current_lr))
 
     for batch_idx, (inputs, targets) in enumerate(trainloader):
+	#making sure training makes use of the gpu. For cpu one has to remove the following two lines
+	#Make sure to put use_cuda above in an if else statement to make this code runnable on cpu.
         if use_cuda:
             inputs, targets = inputs.cuda(), targets.cuda()
-        optimizer.zero_grad()
+        #We set zero grad because pytorch accumulates gradient at the end of each loop.
+	optimizer.zero_grad()
         inputs, targets = Variable(inputs), Variable(targets)
+	#forward pass
         outputs = net(inputs)
+	#calculating loss
         loss = criterion(outputs, targets)
+	#perform a backward pass to get the amount to update from the differentation.
+	#not used on Public and Private because no update of gradients on those sets.
         loss.backward()
         utils.clip_gradient(optimizer, 0.1)
         optimizer.step()
